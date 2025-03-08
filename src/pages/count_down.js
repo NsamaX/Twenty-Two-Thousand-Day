@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -7,6 +7,8 @@ const CountdownPage = () => {
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
   const navigate = useNavigate();
+  const countdownRef = useRef(null);
+  const audioRef = useRef(new Audio("/sounds/old-film-countdown.mp3"));
 
   useEffect(() => {
     const agreed = Cookies.get("agreed");
@@ -23,27 +25,50 @@ const CountdownPage = () => {
   }, []);
 
   useEffect(() => {
-    if (year.length === 4 && month.length > 0 && day.length > 0) {
-      console.log("✅ Saving birthdate to Cookies:", { year, month, day });
-
-      Cookies.set("birthYear", year, { expires: 365 });
-      Cookies.set("birthMonth", month, { expires: 365 });
-      Cookies.set("birthDay", day, { expires: 365 });
-
-      let count = 4;
-      const audio = new Audio("/sounds/old-film-countdown.mp3");
-
-      const interval = setInterval(() => {
-        audio.play();
-        if (count > 0) {
-          count--;
-        } else {
-          clearInterval(interval);
-          console.log("✅ Redirecting to /deathclock");
-          navigate("/deathclock");
-        }
-      }, 1000);
+    if (year.length !== 4 || month === "" || day === "") {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+        console.log("⏹ Countdown stopped due to empty input.");
+      }
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        console.log("🔇 Sound stopped.");
+      }
+      return;
     }
+
+    console.log("✅ Saving birthdate to Cookies:", { year, month, day });
+    Cookies.set("birthYear", year, { expires: 365 });
+    Cookies.set("birthMonth", month, { expires: 365 });
+    Cookies.set("birthDay", day, { expires: 365 });
+
+    let count = 4;
+    countdownRef.current = setInterval(() => {
+      if (count > 0) {
+        audioRef.current.play().catch((err) => console.error("🔊 Audio error:", err)); // 🎵 เล่นเสียง
+        count--;
+      } else {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+        console.log("✅ Redirecting to /deathclock");
+        navigate("/deathclock");
+      }
+    }, 1000);
+
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+        console.log("⏹ Countdown stopped (cleanup)");
+      }
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        console.log("🔇 Sound stopped (cleanup).");
+      }
+    };
   }, [year, month, day, navigate]);
 
   return (
@@ -55,7 +80,7 @@ const CountdownPage = () => {
             value={year}
             onChange={handleInputChange(setYear, 4)}
             maxLength="4"
-            placeholder="?"
+            placeholder="?️"
             className="countdown-input"
           />
           <h3>Year</h3>
@@ -69,7 +94,7 @@ const CountdownPage = () => {
             value={month}
             onChange={handleInputChange(setMonth, 2, 12)}
             maxLength="2"
-            placeholder="?"
+            placeholder="?️"
             className="countdown-input"
           />
           <h3>Month</h3>
@@ -83,7 +108,7 @@ const CountdownPage = () => {
             value={day}
             onChange={handleInputChange(setDay, 2, 31)}
             maxLength="2"
-            placeholder="?"
+            placeholder="?️"
             className="countdown-input"
           />
           <h3>Day</h3>

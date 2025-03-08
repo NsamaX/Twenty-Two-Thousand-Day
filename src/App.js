@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-
 import WarningPage from "./pages/warning";
 import BirthDatePage from "./pages/birth_date";
 import CountdownPage from "./pages/count_down";

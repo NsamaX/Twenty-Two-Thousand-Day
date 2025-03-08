@@ -6,11 +6,18 @@ import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
+const convertToCE = (year) => {
+  if (year > 2400) {
+    return year - 543;
+  }
+  return year;
+};
+
 const DeathClockPage = () => {
   const navigate = useNavigate();
   const audioRef = useRef(null);
 
-  const year = Number(Cookies.get("birthYear"));
+  const year = convertToCE(Number(Cookies.get("birthYear")));
   const month = Number(Cookies.get("birthMonth"));
   const day = Number(Cookies.get("birthDay"));
 
@@ -26,25 +33,20 @@ const DeathClockPage = () => {
     seconds: 0,
   });
 
+  const [isCountingUp, setIsCountingUp] = useState(false);
+
   useEffect(() => {
     if (!year || !month || !day) {
       navigate("/");
       return;
     }
 
-    const updateCountdown = () => {
+    const updateTimer = () => {
       const now = dayjs();
       const diff = deathDate.diff(now);
 
       if (diff <= 0) {
-        setTimeLeft({
-          years: 0,
-          months: 0,
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-        });
+        setIsCountingUp(true);
         return;
       }
 
@@ -60,11 +62,35 @@ const DeathClockPage = () => {
       });
     };
 
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 1000);
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
 
     return () => clearInterval(timer);
   }, [deathDate, navigate]);
+
+  useEffect(() => {
+    if (isCountingUp) {
+      const startTime = dayjs(deathDate);
+      const updateCountup = () => {
+        const now = dayjs();
+        const diff = now.diff(startTime);
+        const elapsed = dayjs.duration(diff).$d;
+
+        setTimeLeft({
+          years: elapsed.years,
+          months: elapsed.months,
+          days: elapsed.days,
+          hours: elapsed.hours,
+          minutes: elapsed.minutes,
+          seconds: elapsed.seconds,
+        });
+      };
+
+      updateCountup();
+      const countupTimer = setInterval(updateCountup, 1000);
+      return () => clearInterval(countupTimer);
+    }
+  }, [isCountingUp, deathDate]);
 
   useEffect(() => {
     if (audioRef.current) {

@@ -1,10 +1,9 @@
 /* Web styles */
-
 @import url('https://fonts.googleapis.com/css2?family=Jim+Nightshade&display=swap');
 
 body {
   background: linear-gradient(to bottom, #000000 0%, #1E1E1E 100%);
-  color: white;
+  color: #FAEDC6;
 
   font-family: 'Jim Nightshade', cursive;
   text-align: center;
@@ -17,30 +16,54 @@ body {
   margin: 0;
   padding-left: 10%;
   padding-right: 10%;
+
+  overflow: hidden;
+  position: relative;
 }
 
 h1 {
+  color: #BE97CC;
   font-size: 60px;
   margin-bottom: 20px;
 }
 
 h2 {
+  color: #BE97CC;
   font-size: 50px;
   margin-bottom: 10px;
 }
 
 h3 {
+  opacity: 0.2;
   font-size: 40px;
   margin-top: 0;
 }
 
 p {
   font-size: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 8vw;
+  }
+
+  h2 {
+    font-size: 7vw;
+  }
+
+  h3 {
+    font-size: 6vw;
+    margin-top: -10px;
+  }
+
+  p {
+    font-size: 5vw;
+  }
 }
 
 /* Web animation */
-
 .page-enter {
   opacity: 0;
 }
@@ -59,32 +82,34 @@ p {
   transition: opacity 800ms ease-out;
 }
 
-/* Warning page styles */
-
 button {
-  font-family: 'Jim Nightshade', cursive;
-  font-size: 40px;
-
   background: none;
   border: none;
-  color: white;
+  color: #93C1C6;
+
+  font-family: 'Jim Nightshade', cursive;
+  font-size: 40px;
 
   cursor: pointer;
   transition: all 0.8s;
 }
 
+@media screen and (max-width: 768px) {
+  button {
+    font-size: 5vw;
+  }
+}
+
 button:hover {
-  color: goldenrod;
+  color: #BE97CC;
 }
 
 /* Birth date page styles */
-
 .clickable-heading {
   cursor: pointer;
 }
 
 /* Count down page styles */
-
 .countdown {
   display: flex;
 }
@@ -93,7 +118,6 @@ button:hover {
   background: none;
   border: none;
   outline: none;
-  color: white;
 
   font-family: 'Jim Nightshade', cursive;
   text-align: center;
@@ -101,38 +125,104 @@ button:hover {
 
   width: 80px;
   height: 60px;
+
+  cursor: pointer;
 }
 
 .time-box {
   margin: 0 40px;
 }
 
-.colons1 {
+.colons1, .colons2 {
   opacity: 0.4;
-  font-size: 80px;
-  margin-top: -34px;
+  font-size: 60px;
+}
+
+.colons1 {
+  margin-top: -20px;
 }
 
 /* Death clock page styles */
-
 .colons2 {
-  opacity: 0.4;
-  font-size: 80px;
-  margin-top: 10px;
+  margin-top: 26px;
+}
+
+@media screen and (max-width: 768px) {
+  .countdown-input {
+    font-size: 6vw;
+
+    width: 20vw;
+    height: 15vw;
+    margin-top: 10px;
+  }
+
+  .time-box {
+    margin: 0;
+  }
+
+  .colons1, .colons2 {
+    font-size: 6vw;
+  }
+
+  .colons1 {
+    margin-top: 22px;
+  }
+
+  .colons2 {
+    margin-top: 26px;
+  }
 }
 
 .leave-button {
+  color: #93C1C6;
+
   opacity: 0.2;
   font-size: 20px;
 
   position: absolute;
-  top: 40px;
+  bottom: 40px;
   right: 40px;
 
   cursor: pointer;
   transition: color 0.3s ease-in-out;
 }
 
+@media screen and (max-width: 768px) {
+  .leave-button {
+    font-size: 4vw;
+    bottom: 3%;
+    right: 3%;
+  }
+}
+
 .leave-button:hover {
-  color: goldenrod;
+  color: #BE97CC;
+}
+
+/* Control light from mouse (Optional) */
+#light-mask {
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+              rgba(255, 255, 200, 0.9) 0%, 
+              rgba(255, 255, 200, 0.6) 1%, 
+              rgba(0, 0, 0, 0.85) 16%, 
+              rgba(0, 0, 0, 1) 26%);
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  pointer-events: none;
+  transition: background 0.1s ease-out;
+}
+
+.hidden-text {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.visible {
+  opacity: 1 !important;
 }
