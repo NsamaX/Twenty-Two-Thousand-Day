@@ -1,25 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useRef } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { CSSTransition, SwitchTransition } from "react-transition-group";
 
-function App() {
+import WarningPage from "./pages/warning";
+import BirthDatePage from "./pages/birth_date";
+import CountdownPage from "./pages/count_down";
+import DeathClockPage from "./pages/death_clock";
+
+export const AudioContext = React.createContext(null);
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  const nodeRef = useRef(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <SwitchTransition>
+      <CSSTransition
+        key={location.pathname}
+        timeout={800}
+        classNames="page"
+        unmountOnExit
+        nodeRef={nodeRef}
+      >
+        <div ref={nodeRef}>
+          <Routes location={location}>
+            <Route path="/" element={<WarningPage />} />
+            <Route path="/birthdate" element={<BirthDatePage />} />
+            <Route path="/countdown" element={<CountdownPage />} />
+            <Route path="/deathclock" element={<DeathClockPage />} />
+          </Routes>
+        </div>
+      </CSSTransition>
+    </SwitchTransition>
   );
-}
+};
+
+const App = () => {
+  const audioRef = useRef(new Audio("/sounds/intense-wildfire-burning.mp3"));
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    audio.loop = true;
+    audio.volume = 0.5;
+  }, []);
+
+  return (
+    <AudioContext.Provider value={audioRef}>
+      <Router>
+        <AnimatedRoutes />
+      </Router>
+    </AudioContext.Provider>
+  );
+};
 
 export default App;
